@@ -4,28 +4,19 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
-using Microsoft.Extensions.Configuration;
-using HangfireWebAppSample.Jobs;
+using System.Linq;
+using Hangfire.Common;
 using Hangfire.MemoryStorage;
 using Hangfire.Console;
 using Hangfire.Console.Extensions;
 using HangfireWebAppSample.Interfaces;
-using System.Linq;
-using System.Collections.Generic;
-using Hangfire.Server;
 using HangfireWebAppSample.Extensions;
+using HangfireWebAppSample.Interfaces.Lifecycle;
 
 namespace HangfireWebAppSample
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
-        {
-            _configuration = configuration;
-        }
-
-        private IConfiguration _configuration { get; }
-
         public void ConfigureServices(IServiceCollection services)
         {
             // Add Hangfire services.
@@ -46,8 +37,19 @@ namespace HangfireWebAppSample
 
             var jobs = typeof(IJob).GetClassesAssignableFrom();
 
-            foreach (Type job in jobs)
-                services.AddTransient(job);
+            foreach (Type jobType in jobs)
+            {
+                var interfaces = jobType.GetInterfaces().ToList();
+                if (interfaces.Contains(typeof(ISingletonLifecycle)))
+                    services.AddSingleton(jobType);
+                else if (interfaces.Contains(typeof(ITransientLifecycle)))
+                    services.AddTransient(jobType);
+                else if (interfaces.Contains(typeof(IScopedLifecycle)))
+                    services.AddScoped(jobType);
+                else
+                    services.AddScoped(jobType);
+            }
+                
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

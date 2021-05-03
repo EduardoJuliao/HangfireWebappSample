@@ -2,7 +2,6 @@
 using HangfireWebAppSample.Interfaces;
 using Microsoft.Extensions.Logging;
 using System.Threading;
-using Hangfire.Console;
 
 namespace HangfireWebAppSample.Jobs
 {

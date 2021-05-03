@@ -1,9 +1,6 @@
 ﻿using Hangfire;
 using HangfireWebAppSample.Interfaces;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace HangfireWebAppSample.Extensions
 {
@@ -32,7 +29,10 @@ namespace HangfireWebAppSample.Extensions
                 }
 
                 if (delayed.Delay.HasValue)
-                    backgroundJobClient.Schedule(() => delayed.Work(null), delayed.Delay.Value);
+                {
+                    if (delayed.Delay != null)
+                        backgroundJobClient.Schedule(() => delayed.Work(null), delayed.Delay.Value);
+                }
                 else if (delayed.EnqueueAt.HasValue)
                     backgroundJobClient.Schedule(() => delayed.Work(null), delayed.EnqueueAt.Value);
 

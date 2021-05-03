@@ -1,5 +1,4 @@
-﻿using Hangfire.Server;
-using System;
+﻿using System;
 
 namespace HangfireWebAppSample.Interfaces
 {

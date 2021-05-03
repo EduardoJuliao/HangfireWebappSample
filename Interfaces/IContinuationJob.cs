@@ -1,6 +1,4 @@
-﻿using Hangfire.Server;
-
-namespace HangfireWebAppSample.Interfaces
+﻿namespace HangfireWebAppSample.Interfaces
 {
     public interface IContinuationJob : IJob
     {
